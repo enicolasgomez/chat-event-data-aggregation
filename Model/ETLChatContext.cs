@@ -17,7 +17,7 @@ namespace etl_service_layer.Model
     public IConfigurationRoot Configuration { get; } 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-      optionsBuilder.UseSqlServer("Server=localhost; Database=PowerDairy; Integrated Security=True;");
+      optionsBuilder.UseSqlServer("Server=localhost; Database=PD3; Integrated Security=True;");
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
