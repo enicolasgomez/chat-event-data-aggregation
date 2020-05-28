@@ -24,9 +24,9 @@ IIS Express
 
 Create a database with a chosen name
 
-run /SQL/data.sql on the newly created database
+run /SQL/model.sql on the newly created database
 
-run /SQL/model.sql on the newly  created database
+run /SQL/data.sql on the newly  created database
 
 Modify ETLChatContext to use the connection string which points to the newly created database
 
