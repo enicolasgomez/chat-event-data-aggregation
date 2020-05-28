@@ -36,11 +36,16 @@ namespace etl_service_layer.Model
     public IEnumerable<Event> GetEventDetails(DateTime? start, DateTime? end)
     {
       List<Event> ae = new List<Event>();
-      using (var context = new ETLChatContext())
+      try
       {
-        string sql = String.Format("spTransactionSelect @startDate = '{0}',@endDate = '{1}'", "1/1/1975 12:00:00 AM", "1/1/2025 12:00:00 AM");
-        ae = context.Events.FromSqlRaw(sql).ToList(); // WHERE [Date] > '"+Convert.ToString(start)+"' AND[Date] < '" + Convert.ToString(end) + "'").ToList();
+        using (var context = new ETLChatContext())
+        {
+          string sql = String.Format("spTransactionSelect @startDate = '{0}',@endDate = '{1}'", "1/1/1975 12:00:00 AM", "1/1/2025 12:00:00 AM");
+          ae = context.Events.FromSqlRaw(sql).ToList();
+        }
       }
+      catch (Exception exc) { }
+
       return ae;
     }
 
@@ -57,28 +62,32 @@ namespace etl_service_layer.Model
 
       //as the above is not supported on Core 2.0 EF 3.1 we are going back 10 years to ADO.NET SqlCommand :) goodbye POCO friendly interfaces
 
-      using (var context = new ETLChatContext())
+      try
       {
-        using (var command = context.Database.GetDbConnection().CreateCommand())
+        using (var context = new ETLChatContext())
         {
-          if (command.Connection.State != ConnectionState.Open)
-            command.Connection.Open();
-          command.CommandText = "Exec spAggregateSelect @minutes = " + minutes;
-          DbDataReader reader = command.ExecuteReader();
-          while (reader.Read())
+          using (var command = context.Database.GetDbConnection().CreateCommand())
           {
-            ae.Add(new AggregatedEvents()
+            if (command.Connection.State != ConnectionState.Open)
+              command.Connection.Open();
+            command.CommandText = "Exec spAggregateSelect @minutes = " + minutes;
+            DbDataReader reader = command.ExecuteReader();
+            while (reader.Read())
             {
-              StartDate = Convert.ToDateTime(reader["StartDate"]),
-              EndDate = Convert.ToDateTime(reader["EndDate"]),
-              Enter = Convert.ToInt32(reader["Enter"]),
-              Leave = Convert.ToInt32(reader["Leave"]),
-              Comment = Convert.ToInt32(reader["Comment"]),
-              HiFive = Convert.ToInt32(reader["HiFive"])
-            });
+              ae.Add(new AggregatedEvents()
+              {
+                StartDate = Convert.ToDateTime(reader["StartDate"]),
+                EndDate = Convert.ToDateTime(reader["EndDate"]),
+                Enter = Convert.ToInt32(reader["Enter"]),
+                Leave = Convert.ToInt32(reader["Leave"]),
+                Comment = Convert.ToInt32(reader["Comment"]),
+                HiFive = Convert.ToInt32(reader["HiFive"])
+              });
+            }
           }
         }
       }
+      catch (Exception exc) { }
 
       return ae;
     }

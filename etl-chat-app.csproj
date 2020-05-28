@@ -23,14 +23,22 @@
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
+    <Compile Remove="etl-chat-appTests\**" />
     <Content Remove="$(SpaRoot)**" />
+    <Content Remove="etl-chat-appTests\**" />
+    <EmbeddedResource Remove="etl-chat-appTests\**" />
     <None Remove="$(SpaRoot)**" />
+    <None Remove="etl-chat-appTests\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
   
   <ItemGroup>
 		<DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="1.0.0-msbuild3-final" />
 	</ItemGroup>
+  
+  <ItemGroup>
+    <None Include="etl-chat-appTests.csproj" />
+  </ItemGroup>
   
   <ItemGroup>
     <Content Update="appsettings.json">
