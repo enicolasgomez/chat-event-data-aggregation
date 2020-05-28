@@ -101,6 +101,7 @@ export class FetchData extends Component {
   }
 
   async populateChatData() {
+    this.setState({ loading: true });
     let endpoint = '/event/geteventtransactions';
     if (this.state.granularity > 1)
       endpoint = '/event/geteventaggregated?minutes=' + this.state.granularity;
